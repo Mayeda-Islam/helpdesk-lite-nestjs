@@ -29,7 +29,7 @@ export class TicketsService {
     }
   ]
   findAll(status?: Ticket['status'], priority?: Ticket['priority']) {
-    
+   
     let tickets= this.tickets;
     if(status){
       tickets= tickets.filter(ticket => ticket.status === status);
@@ -46,4 +46,17 @@ export class TicketsService {
     }
     return ticket;
   }
+ private nextTicketId=4
+create(payload:any){
+  const ticket:Ticket={
+    id: this.nextTicketId++,
+    subject: payload.subject,
+    description: payload.description,
+    priority: payload.priority,
+    status: 'open',
+    createdAt: new Date().toISOString(),
+  }
+  this.tickets.push(ticket);
+  return ticket;
+}
 }

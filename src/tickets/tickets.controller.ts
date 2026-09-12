@@ -1,4 +1,4 @@
-import { Controller, Get, ParseIntPipe, Param, Query } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Param, Query, Post, Body } from '@nestjs/common';
 import { TicketsService } from './tickets.service.js';
 import { Ticket } from './ticket.interface.js';
 
@@ -18,5 +18,10 @@ export class TicketsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.ticketService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() payload: any) {
+    return this.ticketService.create(payload);
   }
 }

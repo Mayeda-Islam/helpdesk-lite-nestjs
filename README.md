@@ -1,103 +1,120 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Helpdesk-lite
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A lightweight NestJS backend application for managing support tickets with request logging, response standardization, and staff authentication.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+### 1. **Tickets Management**
+   - Create new support tickets
+   - Retrieve tickets (list all or filter)
+   - Update ticket status and details
+   - Close tickets
+   - Data validation using DTOs
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 2. **Request Logger Middleware**
+   - Global HTTP request logging
+   - Improves debugging and monitoring of incoming API calls
+   - Attached globally in the application bootstrap
 
-## Project setup
+### 3. **Response Interceptor**
+   - Standardized HTTP response format across all endpoints
+   - Improves API consistency and client-side handling
+   - Global response transformation
 
-```bash
-$ npm install
+### 4. **Staff Authorization Guard**
+   - Header-based authentication (`x-staffkey`)
+   - Protects staff-only endpoints
+   - Validates staff access before processing requests
+   - Throws `ForbiddenException` on unauthorized access
+
+## Project Structure
+
+```
+src/
+├── app.module.ts              # Root application module
+├── main.ts                    # Application entry point
+├── common/
+│   ├── request-logger.middleware.ts   # Global request logging
+│   └── response.interceptor.ts        # Response standardization
+└── tickets/
+    ├── tickets.module.ts      # Tickets feature module
+    ├── tickets.service.ts     # Business logic for tickets
+    ├── tickets.controller.ts  # API endpoints
+    ├── ticket.interface.ts    # Ticket data model
+    ├── guards/
+    │   └── staff.guard.ts     # Staff authorization guard
+    └── dto/
+        ├── create-ticket.dto.ts       # Create ticket validation
+        ├── update-tickets.dto.ts      # Update ticket validation
+        └── filter-query-tickets.dto.ts # Filter tickets validation
 ```
 
-## Compile and run the project
+## Tech Stack
+
+- **Framework**: NestJS 12.x
+- **Language**: TypeScript 6.x
+- **Validation**: class-validator, class-transformer
+- **Runtime**: Node.js
+- **Testing**: Vitest, Supertest
+- **Linting**: oxlint
+- **Code Formatting**: Prettier
+
+## Installation
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Install dependencies
+npm install
 ```
 
-## Run tests
+## Running the Application
 
 ```bash
-# unit tests
-$ npm run test
+# Development mode (with watch)
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
+# Production build
+npm run build
 
-# test coverage
-$ npm run test:cov
+# Production mode
+npm run start:prod
+
+# Debug mode
+npm run start:debug
 ```
 
-## Deployment
+## API Endpoints
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Tickets Module
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+All ticket endpoints require `x-staffkey: secret` header for authorization.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- **GET** `/tickets` - List all tickets (supports filtering)
+- **POST** `/tickets` - Create a new ticket
+- **GET** `/tickets/:id` - Get ticket by ID
+- **PATCH** `/tickets/:id` - Update a ticket
+- **DELETE** `/tickets/:id` - Delete a ticket
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Middleware & Interceptors
 
-## Observability
+### Request Logger
+- Automatically logs all incoming HTTP requests
+- Logs: method, URL, and request metadata
+- Helps with debugging and monitoring API usage
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+### Response Interceptor
+- Standardizes all API responses
+- Wraps successful and  responses in consistent format
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+## Guards
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+### StaffGuard
+- Protects endpoints that require staff authorization
+- Validates `x-staffkey` header
+- Applied to staff-only tickets endpoints
 
-## Resources
+## License
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observer](https://observer.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+UNLICENSED
 
 ## Support
 

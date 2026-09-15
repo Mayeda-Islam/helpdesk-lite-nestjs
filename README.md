@@ -88,11 +88,12 @@ npm run start:debug
 
 All ticket endpoints require `x-staffkey: secret` header for authorization.
 
-- **GET** `/tickets` - List all tickets (supports filtering)
+- **GET** `/tickets` - List all tickets 
+- **GET?** `/tickets?status=open&priority=low` - List all tickets via filtering 
 - **POST** `/tickets` - Create a new ticket
 - **GET** `/tickets/:id` - Get ticket by ID
 - **PATCH** `/tickets/:id` - Update a ticket
-- **DELETE** `/tickets/:id` - Delete a ticket
+- **PATCH** `/tickets/:id/close` - Close a ticket
 
 ## Middleware & Interceptors
 
